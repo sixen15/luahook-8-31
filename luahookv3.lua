@@ -6726,9 +6726,9 @@ local Weather = {}
             return e
         end
         local function spawnStreak(start, dir, ci, pi, floorY)
-            if not Config.Weather or not cfg("WeatherShootingStars", false) then
-
-        end
+            if not Config.Weather or not cfg("WeatherShootingStars", false) then 
+        return 
+    end
         local function viewAz(cam)
             local lv = cam.CFrame.LookVector
             local az = math.atan2(lv.Z, lv.X)
