@@ -1,96 +1,4 @@
-                return
-            end
-            if #_starLive >= math.clamp(math.floor(4 + 2 * evRate("WeatherStarRate")), 4, 8) then
-                return
-            end
-            local cls, pal = CLS[ci], PAL[pi]
-            local dist = cls[1] + math.random() * cls[2]
-            local spd  = cls[3] + math.random() * cls[4]
-            local tail = cls[5] + math.random() * cls[6]
-            if start.Y + dir.Y * dist < floorY then
-                local ny = (floorY - start.Y) / dist
-                local hl = math.sqrt(dir.X * dir.X + dir.Z * dir.Z)
-                if hl > 1e-4 then
-                    local k = math.sqrt(math.max(0, 1 - ny * ny)) / hl
-                    dir = Vec(dir.X * k, ny, dir.Z * k)
-                end
-            end
-            local dur  = dist / spd
-            local life = math.min(tail / spd, dur * 0.9)
-            local sep  = cls[7] * (0.85 + math.random() * 0.3)
-            local glintD = 0.3 + math.random() * 0.3
-            local cf0 = CFrame.lookAt(start, start + dir)
-            local host = mkBoltPart(WHITE, 1, Vec(0.2, 0.2, 0.2), cf0, getLightFolder())
-            local aT = Instance.new("Attachment"); aT.Position = Vec(0, sep * 0.5, 0); aT.Parent = host
-            local aB = Instance.new("Attachment"); aB.Position = Vec(0, -sep * 0.5, 0); aB.Parent = host
-            local tr = Instance.new("Trail")
-            tr.Attachment0 = aT; tr.Attachment1 = aB
-            tr.FaceCamera = true
-            tr.Texture = TX_SGLOW; tr.TextureMode = Enum.TextureMode.Stretch; tr.TextureLength = 1
-            tr.Color = ColorSequence.new({ CSK(0, pal[1]), CSK(0.24, pal[2]), CSK(1, pal[3]) })
-            tr.Transparency = TR_TRANSP; tr.WidthScale = TR_WIDTH
-            tr.Lifetime = life; tr.LightEmission = 1; tr.LightInfluence = 0
-            tr.MinLength = 0.08; tr.Enabled = false
-            tr.Parent = host
-            local ion = nil
-            if ci == 3 then
-                ion = Instance.new("Trail")
-                ion.Attachment0 = aT; ion.Attachment1 = aB
-                ion.FaceCamera = true
-                ion.Texture = TX_SGLOW; ion.TextureMode = Enum.TextureMode.Stretch; ion.TextureLength = 1
-                ion.Color = ColorSequence.new({ CSK(0, pal[2]), CSK(1, pal[3]) })
-                ion.Transparency = ION_TRANSP; ion.WidthScale = ION_WIDTH
-                ion.Lifetime = life * 2.6; ion.LightEmission = 0.85; ion.LightInfluence = 0
-                ion.MinLength = 0.1; ion.Enabled = false
-                ion.Parent = host
-            end
-            local hub = Instance.new("Attachment"); hub.Parent = host
-            local coreS = sep * 0.62
-            local core = mkSprite(hub, TX_SGLOW, pal[1], NumberSequence.new({
-                NSK(0, coreS * 0.55), NSK(0.1, coreS), NSK(1, coreS * 0.3) }), HEAD_TR, dur, 1)
-            core.LockedToPart = true
-            local haloS = sep * 1.7
-            local halo = mkSprite(hub, TX_SGLOW, pal[2], NumberSequence.new({
-                NSK(0, haloS * 0.5), NSK(0.12, haloS), NSK(1, haloS * 0.35) }), HALO_TR, dur, 1)
-            halo.LockedToPart = true
-            local gs = sep * 1.9
-            local gl = mkSprite(hub, TX_STAR4, GLINT_C, NumberSequence.new({
-                NSK(0, gs * 0.1), NSK(0.32, gs), NSK(1, gs * 0.14) }), GLINT_TR, glintD * 1.2, 0.55)
-            gl.Rotation = NumberRange.new(0, 90)
-            gl.RotSpeed = NumberRange.new(-16, 16)
-            gl:Emit(1)
-            table.insert(_starLive, {
-                host = host, tr = tr, ion = ion, core = core, halo = halo, aT = aT, aB = aB,
-                cf0 = cf0, dir = dir, dist = dist, dur = dur, sep = sep,
-                t0 = tick() + glintD, started = false,
-            })
-            Debris:AddItem(host, glintD + dur + life * 2.8 + 0.6)
-        end
-        local function pickPal()
-            local r = math.random()
-            if r < 0.55 then
-                return 1
-            end
-            if r < 0.92 then
-                return 2
-            end
-            return 3
-        end
-        local function pickCls(pi)
-            if pi == 3 then
-                if math.random() < 0.6 then
-                    return 3
-                end
-                return 2
-            end
-            local r = math.random()
-            if r < 0.25 then
-                return 1
-            end
-            if r < 0.7 then
-                return 2
-            end
-            return 3if _G["\76\72"] then
+if _G["\76\72"] then
     pcall(function() _G["\76\72"]:Unload() end)
     _G["\76\72"] = nil
     task.wait(0.15)
@@ -6726,9 +6634,101 @@ local Weather = {}
             return e
         end
         local function spawnStreak(start, dir, ci, pi, floorY)
-            if not Config.Weather or not cfg("WeatherShootingStars", false) then 
-        return 
-    end
+            if not Config.Weather or not cfg("WeatherShootingStars", false) then
+                return
+            end
+            if #_starLive >= math.clamp(math.floor(4 + 2 * evRate("WeatherStarRate")), 4, 8) then
+                return
+            end
+            local cls, pal = CLS[ci], PAL[pi]
+            local dist = cls[1] + math.random() * cls[2]
+            local spd  = cls[3] + math.random() * cls[4]
+            local tail = cls[5] + math.random() * cls[6]
+            if start.Y + dir.Y * dist < floorY then
+                local ny = (floorY - start.Y) / dist
+                local hl = math.sqrt(dir.X * dir.X + dir.Z * dir.Z)
+                if hl > 1e-4 then
+                    local k = math.sqrt(math.max(0, 1 - ny * ny)) / hl
+                    dir = Vec(dir.X * k, ny, dir.Z * k)
+                end
+            end
+            local dur  = dist / spd
+            local life = math.min(tail / spd, dur * 0.9)
+            local sep  = cls[7] * (0.85 + math.random() * 0.3)
+            local glintD = 0.3 + math.random() * 0.3
+            local cf0 = CFrame.lookAt(start, start + dir)
+            local host = mkBoltPart(WHITE, 1, Vec(0.2, 0.2, 0.2), cf0, getLightFolder())
+            local aT = Instance.new("Attachment"); aT.Position = Vec(0, sep * 0.5, 0); aT.Parent = host
+            local aB = Instance.new("Attachment"); aB.Position = Vec(0, -sep * 0.5, 0); aB.Parent = host
+            local tr = Instance.new("Trail")
+            tr.Attachment0 = aT; tr.Attachment1 = aB
+            tr.FaceCamera = true
+            tr.Texture = TX_SGLOW; tr.TextureMode = Enum.TextureMode.Stretch; tr.TextureLength = 1
+            tr.Color = ColorSequence.new({ CSK(0, pal[1]), CSK(0.24, pal[2]), CSK(1, pal[3]) })
+            tr.Transparency = TR_TRANSP; tr.WidthScale = TR_WIDTH
+            tr.Lifetime = life; tr.LightEmission = 1; tr.LightInfluence = 0
+            tr.MinLength = 0.08; tr.Enabled = false
+            tr.Parent = host
+            local ion = nil
+            if ci == 3 then
+                ion = Instance.new("Trail")
+                ion.Attachment0 = aT; ion.Attachment1 = aB
+                ion.FaceCamera = true
+                ion.Texture = TX_SGLOW; ion.TextureMode = Enum.TextureMode.Stretch; ion.TextureLength = 1
+                ion.Color = ColorSequence.new({ CSK(0, pal[2]), CSK(1, pal[3]) })
+                ion.Transparency = ION_TRANSP; ion.WidthScale = ION_WIDTH
+                ion.Lifetime = life * 2.6; ion.LightEmission = 0.85; ion.LightInfluence = 0
+                ion.MinLength = 0.1; ion.Enabled = false
+                ion.Parent = host
+            end
+            local hub = Instance.new("Attachment"); hub.Parent = host
+            local coreS = sep * 0.62
+            local core = mkSprite(hub, TX_SGLOW, pal[1], NumberSequence.new({
+                NSK(0, coreS * 0.55), NSK(0.1, coreS), NSK(1, coreS * 0.3) }), HEAD_TR, dur, 1)
+            core.LockedToPart = true
+            local haloS = sep * 1.7
+            local halo = mkSprite(hub, TX_SGLOW, pal[2], NumberSequence.new({
+                NSK(0, haloS * 0.5), NSK(0.12, haloS), NSK(1, haloS * 0.35) }), HALO_TR, dur, 1)
+            halo.LockedToPart = true
+            local gs = sep * 1.9
+            local gl = mkSprite(hub, TX_STAR4, GLINT_C, NumberSequence.new({
+                NSK(0, gs * 0.1), NSK(0.32, gs), NSK(1, gs * 0.14) }), GLINT_TR, glintD * 1.2, 0.55)
+            gl.Rotation = NumberRange.new(0, 90)
+            gl.RotSpeed = NumberRange.new(-16, 16)
+            gl:Emit(1)
+            table.insert(_starLive, {
+                host = host, tr = tr, ion = ion, core = core, halo = halo, aT = aT, aB = aB,
+                cf0 = cf0, dir = dir, dist = dist, dur = dur, sep = sep,
+                t0 = tick() + glintD, started = false,
+            })
+            Debris:AddItem(host, glintD + dur + life * 2.8 + 0.6)
+        end
+        local function pickPal()
+            local r = math.random()
+            if r < 0.55 then
+                return 1
+            end
+            if r < 0.92 then
+                return 2
+            end
+            return 3
+        end
+        local function pickCls(pi)
+            if pi == 3 then
+                if math.random() < 0.6 then
+                    return 3
+                end
+                return 2
+            end
+            local r = math.random()
+            if r < 0.25 then
+                return 1
+            end
+            if r < 0.7 then
+                return 2
+            end
+            return 3
+        end
         local function viewAz(cam)
             local lv = cam.CFrame.LookVector
             local az = math.atan2(lv.Z, lv.X)
